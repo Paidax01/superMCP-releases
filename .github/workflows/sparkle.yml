@@ -29,18 +29,31 @@ jobs:
         run: |
           gh release download ${{ github.event.release.tag_name }} --pattern "*.dmg" --pattern "*.zip" --dir .
 
+      - name: Debug Key Length
+        env:
+          SPARKLE_ED25519_PRIVATE_KEY: ${{ secrets.SPARKLE_PRIVATE_KEY }}
+        run: |
+          KEY_LEN=${#SPARKLE_ED25519_PRIVATE_KEY}
+          echo "Private Key Length: $KEY_LEN"
+          if [ "$KEY_LEN" -lt 10 ]; then
+            echo "::error::Key seems too short!"
+            exit 1
+          fi
+
       - name: Generate Appcast
         env:
           SPARKLE_ED25519_PRIVATE_KEY: ${{ secrets.SPARKLE_PRIVATE_KEY }}
         run: |
-          # Strip all whitespace from the key
+          # Use printf to avoid trailing newline, and strip all whitespace from the key
           printf "%s" "$SPARKLE_ED25519_PRIVATE_KEY" | tr -d '[:space:]' | ./sparkle_bin/bin/generate_appcast . --ed-key-file -
 
       - name: Commit and Push Appcast
         run: |
           git config --global user.name "github-actions[bot]"
           git config --global user.email "github-actions[bot]@users.noreply.github.com"
-          git add appcast.xml
-          # Only commit if appcast.xml changed
-          git commit -m "chore: update appcast.xml for release ${{ github.event.release.tag_name }}" || echo "No changes to appcast.xml"
+          git pull --rebase origin main
+          # Force add artifacts in case .gitignore excludes them
+          git add -f appcast.xml *.zip *.dmg
+          # Only commit if something changed
+          git commit -m "chore: release ${{ github.event.release.tag_name }} artifacts" || echo "No changes to commit"
           git push origin HEAD:main
