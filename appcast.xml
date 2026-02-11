@@ -8,7 +8,6 @@
             <sparkle:version>3</sparkle:version>
             <sparkle:shortVersionString>1.0.3</sparkle:shortVersionString>
             <sparkle:minimumSystemVersion>14.0</sparkle:minimumSystemVersion>
-            <sparkle:releaseNotesLink>https://raw.githubusercontent.com/Paidax01/superMCP-releases/main/applemcp.html</sparkle:releaseNotesLink>
             <enclosure url="https://raw.githubusercontent.com/Paidax01/superMCP-releases/main/applemcp.zip" length="4532398" type="application/octet-stream" sparkle:edSignature="9qicjAISsz59ddh4EUEjy6cefdyIEQoxMHHaTuYI7dwFmDGx5h2kOyi8c6jZkRZMUIJUNdHSYqf9ITanjrEVBQ=="/>
         </item>
         <item>
