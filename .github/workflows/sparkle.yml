@@ -33,8 +33,8 @@ jobs:
         env:
           SPARKLE_ED25519_PRIVATE_KEY: ${{ secrets.SPARKLE_PRIVATE_KEY }}
         run: |
-          # Use current directory (.) as it contains the downloaded assets
-          echo "$SPARKLE_ED25519_PRIVATE_KEY" | ./sparkle_bin/bin/generate_appcast . --ed-key-file -
+          # Strip all whitespace from the key
+          printf "%s" "$SPARKLE_ED25519_PRIVATE_KEY" | tr -d '[:space:]' | ./sparkle_bin/bin/generate_appcast . --ed-key-file -
 
       - name: Commit and Push Appcast
         run: |
