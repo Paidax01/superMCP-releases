@@ -3,6 +3,14 @@
     <channel>
         <title>applemcp</title>
         <item>
+            <title>1.0.2</title>
+            <pubDate>Wed, 11 Feb 2026 07:02:59 +0000</pubDate>
+            <sparkle:version>2</sparkle:version>
+            <sparkle:shortVersionString>1.0.2</sparkle:shortVersionString>
+            <sparkle:minimumSystemVersion>14.0</sparkle:minimumSystemVersion>
+            <enclosure url="https://raw.githubusercontent.com/Paidax01/superMCP-releases/main/applemcp.zip" length="4527885" type="application/octet-stream" sparkle:edSignature="0ONX63huolMLXw2ZQfGlYo3gcGX3XUtlkXuc21NKxLnw6TlTLCCVSWCGVn9WLZ/sv2M/MU1OIKHfd09sicgKDQ=="/>
+        </item>
+        <item>
             <title>1.0</title>
             <pubDate>Wed, 11 Feb 2026 06:45:15 +0000</pubDate>
             <sparkle:version>1</sparkle:version>
