@@ -6,9 +6,9 @@
             <title>1.0</title>
             <pubDate>Wed, 11 Feb 2026 06:45:15 +0000</pubDate>
             <sparkle:version>1</sparkle:version>
-            <sparkle:shortVersionString>1.0</sparkle:shortVersionString>
+            <sparkle:shortVersionString>1.0.1</sparkle:shortVersionString>
             <sparkle:minimumSystemVersion>14.0</sparkle:minimumSystemVersion>
-            <enclosure url="https://raw.githubusercontent.com/Paidax01/superMCP/main/applemcp.zip" length="4527892" type="application/octet-stream" sparkle:edSignature="2ZCQtPMxr+j+F317eS7m70VnZDxJc2lmEtdHzKDJD3gPCvdMJvFVH0a9Cf0NHy47O1kUdu28dZRi6j063ShpCQ=="/>
+            <enclosure url="https://raw.githubusercontent.com/Paidax01/superMCP-releases/main/applemcp.zip" length="4527885" type="application/octet-stream" sparkle:edSignature="8YNwYNJBFFFNzAtCMzUpdrZ3yKa7ButPMGxisvIPQ/VEpHSPogwPAzAAu2eY59kd1zDy/uQikNP6RFjatLTACg=="/>
         </item>
     </channel>
 </rss>
