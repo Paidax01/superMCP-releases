@@ -40,6 +40,32 @@ jobs:
             exit 1
           fi
 
+      - name: Generate Release Notes
+        env:
+          RELEASE_BODY: ${{ github.event.release.body }}
+        run: |
+          # Find the zip file
+          ZIP_PATH=$(find . -maxdepth 1 -name "*.zip" | head -n 1)
+          if [ -z "$ZIP_PATH" ]; then
+            echo "::warning::No .zip file found. Skipping release notes."
+            exit 0
+          fi
+          
+          # Get basename of the zip (e.g. applemcp from applemcp.zip)
+          BASENAME=$(basename "$ZIP_PATH" .zip)
+          HTML_FILE="$BASENAME.html"
+          
+          # Simple conversion: wrap markdown in a pre tag for basic display
+          # Ideally, you'd use a markdown-to-html converter here
+          echo "<html><body>" > "$HTML_FILE"
+          echo "<h2>Release Notes</h2>" >> "$HTML_FILE"
+          echo "<pre style=\"white-space: pre-wrap; font-family: system-ui;\">" >> "$HTML_FILE"
+          echo "$RELEASE_BODY" >> "$HTML_FILE"
+          echo "</pre>" >> "$HTML_FILE"
+          echo "</body></html>" >> "$HTML_FILE"
+          
+          echo "Created $HTML_FILE to be picked up by generate_appcast"
+
       - name: Generate Appcast
         env:
           SPARKLE_ED25519_PRIVATE_KEY: ${{ secrets.SPARKLE_PRIVATE_KEY }}
