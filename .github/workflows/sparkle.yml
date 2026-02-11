@@ -27,7 +27,7 @@ jobs:
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
         run: |
-          gh release download ${{ github.event.release.tag_name }} --pattern "*.dmg" --pattern "*.zip" --dir .
+          gh release download ${{ github.event.release.tag_name }} --pattern "*.dmg" --pattern "*.zip" --dir . --clobber
 
       - name: Debug Key Length
         env:
