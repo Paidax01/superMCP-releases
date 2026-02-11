@@ -1,31 +1,87 @@
-<?xml version="1.0" standalone="yes"?>
-<rss xmlns:sparkle="http://www.andymatuschak.org/xml-namespaces/sparkle" version="2.0">
-    <channel>
-        <title>applemcp</title>
-        <item>
-            <title>1.0.3</title>
-            <pubDate>Wed, 11 Feb 2026 08:11:22 +0000</pubDate>
-            <sparkle:version>3</sparkle:version>
-            <sparkle:shortVersionString>1.0.3</sparkle:shortVersionString>
-            <sparkle:minimumSystemVersion>14.0</sparkle:minimumSystemVersion>
-            <sparkle:releaseNotesLink>https://raw.githubusercontent.com/Paidax01/superMCP-releases/main/applemcp.html</sparkle:releaseNotesLink>
-            <enclosure url="https://raw.githubusercontent.com/Paidax01/superMCP-releases/main/applemcp.zip" length="4532398" type="application/octet-stream" sparkle:edSignature="9qicjAISsz59ddh4EUEjy6cefdyIEQoxMHHaTuYI7dwFmDGx5h2kOyi8c6jZkRZMUIJUNdHSYqf9ITanjrEVBQ=="/>
-        </item>
-        <item>
-            <title>1.0.2</title>
-            <pubDate>Wed, 11 Feb 2026 07:02:59 +0000</pubDate>
-            <sparkle:version>2</sparkle:version>
-            <sparkle:shortVersionString>1.0.2</sparkle:shortVersionString>
-            <sparkle:minimumSystemVersion>14.0</sparkle:minimumSystemVersion>
-            <enclosure url="https://raw.githubusercontent.com/Paidax01/superMCP-releases/main/applemcp.zip" length="4527885" type="application/octet-stream" sparkle:edSignature="0ONX63huolMLXw2ZQfGlYo3gcGX3XUtlkXuc21NKxLnw6TlTLCCVSWCGVn9WLZ/sv2M/MU1OIKHfd09sicgKDQ=="/>
-        </item>
-        <item>
-            <title>1.0</title>
-            <pubDate>Wed, 11 Feb 2026 06:45:15 +0000</pubDate>
-            <sparkle:version>1</sparkle:version>
-            <sparkle:shortVersionString>1.0.1</sparkle:shortVersionString>
-            <sparkle:minimumSystemVersion>14.0</sparkle:minimumSystemVersion>
-            <enclosure url="https://raw.githubusercontent.com/Paidax01/superMCP-releases/main/applemcp.zip" length="4527885" type="application/octet-stream" sparkle:edSignature="8YNwYNJBFFFNzAtCMzUpdrZ3yKa7ButPMGxisvIPQ/VEpHSPogwPAzAAu2eY59kd1zDy/uQikNP6RFjatLTACg=="/>
-        </item>
-    </channel>
-</rss>
+name: Generate Appcast on Release
+
+on:
+  release:
+    types: [published]
+
+permissions:
+  contents: write
+
+jobs:
+  generate-appcast:
+    runs-on: macos-latest
+    steps:
+      - name: Checkout Release Repo
+        uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+
+      - name: Install Sparkle
+        run: |
+          mkdir -p sparkle_bin
+          curl -L https://github.com/sparkle-project/Sparkle/releases/download/2.6.4/Sparkle-2.6.4.tar.xz -o Sparkle.tar.xz
+          tar -xf Sparkle.tar.xz -C sparkle_bin bin/generate_appcast bin/sign_update
+          chmod +x sparkle_bin/bin/generate_appcast sparkle_bin/bin/sign_update
+
+      - name: Download Release Assets
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        run: |
+          gh release download ${{ github.event.release.tag_name }} --pattern "*.dmg" --pattern "*.zip" --dir . --clobber
+
+      - name: Debug Key Length
+        env:
+          SPARKLE_ED25519_PRIVATE_KEY: ${{ secrets.SPARKLE_PRIVATE_KEY }}
+        run: |
+          KEY_LEN=${#SPARKLE_ED25519_PRIVATE_KEY}
+          echo "Private Key Length: $KEY_LEN"
+          if [ "$KEY_LEN" -lt 10 ]; then
+            echo "::error::Key seems too short!"
+            exit 1
+          fi
+
+      - name: Generate Release Notes
+        env:
+          RELEASE_BODY: ${{ github.event.release.body }}
+        run: |
+          # Find the zip file
+          ZIP_PATH=$(find . -maxdepth 1 -name "*.zip" | head -n 1)
+          if [ -z "$ZIP_PATH" ]; then
+            echo "::warning::No .zip file found. Skipping release notes."
+            exit 0
+          fi
+          
+          # Get basename of the zip (e.g. applemcp from applemcp.zip)
+          BASENAME=$(basename "$ZIP_PATH" .zip)
+          HTML_FILE="$BASENAME.html"
+          
+          # Ideally, you'd use a markdown-to-html converter here
+          # Note: `>` will overwrite the file if it exists, so no extra flag needed
+          echo "<html><body>" > "$HTML_FILE"
+          echo "<h2>Release Notes</h2>" >> "$HTML_FILE"
+          echo "<pre style=\"white-space: pre-wrap; font-family: system-ui;\">" >> "$HTML_FILE"
+          echo "$RELEASE_BODY" >> "$HTML_FILE"
+          echo "</pre>" >> "$HTML_FILE"
+          echo "</body></html>" >> "$HTML_FILE"
+          
+          echo "Created $HTML_FILE to be picked up by generate_appcast"
+
+      - name: Generate Appcast
+        env:
+          SPARKLE_ED25519_PRIVATE_KEY: ${{ secrets.SPARKLE_PRIVATE_KEY }}
+        run: |
+          # Use printf to avoid trailing newline, and strip all whitespace from the key
+          printf "%s" "$SPARKLE_ED25519_PRIVATE_KEY" | tr -d '[:space:]' | ./sparkle_bin/bin/generate_appcast . --ed-key-file -
+
+      - name: Commit and Push Appcast
+        run: |
+          git config --global user.name "github-actions[bot]"
+          git config --global user.email "github-actions[bot]@users.noreply.github.com"
+          # Force add artifacts, ignoring errors if one type doesn't exist
+          git add -f appcast.xml
+          git add -f *.zip 2>/dev/null || true
+          git add -f *.dmg 2>/dev/null || true
+          git add -f *.html 2>/dev/null || true
+          # Only commit if something changed
+          git commit -m "chore: release ${{ github.event.release.tag_name }} artifacts" || echo "No changes to commit"
+          git push origin HEAD:main
