@@ -51,9 +51,10 @@ jobs:
         run: |
           git config --global user.name "github-actions[bot]"
           git config --global user.email "github-actions[bot]@users.noreply.github.com"
-          git pull --rebase origin main
-          # Force add artifacts in case .gitignore excludes them
-          git add -f appcast.xml *.zip *.dmg
+          # Force add artifacts, ignoring errors if one type doesn't exist
+          git add -f appcast.xml
+          git add -f *.zip 2>/dev/null || true
+          git add -f *.dmg 2>/dev/null || true
           # Only commit if something changed
           git commit -m "chore: release ${{ github.event.release.tag_name }} artifacts" || echo "No changes to commit"
           git push origin HEAD:main
