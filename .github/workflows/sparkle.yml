@@ -22,6 +22,7 @@ jobs:
           curl -L https://github.com/sparkle-project/Sparkle/releases/download/2.6.4/Sparkle-2.6.4.tar.xz -o Sparkle.tar.xz
           tar -xf Sparkle.tar.xz -C sparkle_bin bin/generate_appcast bin/sign_update
           chmod +x sparkle_bin/bin/generate_appcast sparkle_bin/bin/sign_update
+          rm Sparkle.tar.xz
 
       - name: Download Release Assets
         env:
@@ -45,6 +46,7 @@ jobs:
           SPARKLE_ED25519_PRIVATE_KEY: ${{ secrets.SPARKLE_PRIVATE_KEY }}
         run: |
           # Use printf to avoid trailing newline, and strip all whitespace from the key
+          if [ ! -s appcast.xml ]; then rm -f appcast.xml; fi
           printf "%s" "$SPARKLE_ED25519_PRIVATE_KEY" | tr -d '[:space:]' | ./sparkle_bin/bin/generate_appcast . --ed-key-file -
 
       - name: Commit and Push Appcast
