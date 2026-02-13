@@ -3,6 +3,17 @@
     <channel>
         <title>applemcp</title>
         <item>
+            <title>1.0.5</title>
+            <pubDate>Fri, 13 Feb 2026 05:14:21 +0000</pubDate>
+            <sparkle:version>4</sparkle:version>
+            <sparkle:shortVersionString>1.0.5</sparkle:shortVersionString>
+            <sparkle:minimumSystemVersion>14.0</sparkle:minimumSystemVersion>
+            <enclosure url="https://raw.githubusercontent.com/Paidax01/superMCP-releases/main/SuperMCP.zip" length="4718201" type="application/octet-stream" sparkle:edSignature="DAlTS+T8YatzO4lsyS2e8G7xSsOuz20xt0KP7vf+5uQfkxw5CA4s18T1pbISz3Vr+xi8auxWv2im/jy5s9n2AQ=="/>
+            <sparkle:deltas>
+                <enclosure url="https://raw.githubusercontent.com/Paidax01/superMCP-releases/main/SuperMCP4-3.delta" sparkle:deltaFrom="3" length="3229470" type="application/octet-stream" sparkle:deltaFromSparkleExecutableSize="860512" sparkle:deltaFromSparkleLocales="de,he,ar,el,ja,fa,uk" sparkle:edSignature="FlYa2dmEWh6L91q17gOpLfH0kGeUmsvSfskGJv3+n4pTVT2/Z3mJzeNvhx6BWcgGjssmWRKDKVQbMj6cFZf3CQ=="/>
+            </sparkle:deltas>
+        </item>
+        <item>
             <title>1.0.3</title>
             <pubDate>Wed, 11 Feb 2026 08:11:22 +0000</pubDate>
             <sparkle:version>3</sparkle:version>
@@ -17,14 +28,6 @@
             <sparkle:shortVersionString>1.0.2</sparkle:shortVersionString>
             <sparkle:minimumSystemVersion>14.0</sparkle:minimumSystemVersion>
             <enclosure url="https://raw.githubusercontent.com/Paidax01/superMCP-releases/main/applemcp.zip" length="4527885" type="application/octet-stream" sparkle:edSignature="0ONX63huolMLXw2ZQfGlYo3gcGX3XUtlkXuc21NKxLnw6TlTLCCVSWCGVn9WLZ/sv2M/MU1OIKHfd09sicgKDQ=="/>
-        </item>
-        <item>
-            <title>1.0</title>
-            <pubDate>Wed, 11 Feb 2026 06:45:15 +0000</pubDate>
-            <sparkle:version>1</sparkle:version>
-            <sparkle:shortVersionString>1.0.1</sparkle:shortVersionString>
-            <sparkle:minimumSystemVersion>14.0</sparkle:minimumSystemVersion>
-            <enclosure url="https://raw.githubusercontent.com/Paidax01/superMCP-releases/main/applemcp.zip" length="4527885" type="application/octet-stream" sparkle:edSignature="8YNwYNJBFFFNzAtCMzUpdrZ3yKa7ButPMGxisvIPQ/VEpHSPogwPAzAAu2eY59kd1zDy/uQikNP6RFjatLTACg=="/>
         </item>
     </channel>
 </rss>
